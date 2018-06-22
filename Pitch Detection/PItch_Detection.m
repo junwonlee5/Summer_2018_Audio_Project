@@ -5,11 +5,12 @@ the pitch along with the harmonics on top of the pitch.
 You must import data from "music pitch chart.csv" file to get the table of
 notes and their corresponding frequencies. To do so, click import data,
 select the "music pitch chart.csv" file, make sure the output type is
-column vectors, and click Import Selection.
+column vectors, and click Import Sele
+ction.
 %}
 %% 
 
-[signal,fs] = audioread('clarinet b flat.wav'); 
+[signal,fs] = audioread('Passage_pitch.wav'); 
 % reads data from the audiofile and returns sampled data, signal, and a
 % sample rate of the data, Fs
 signal = signal(:,1);
@@ -27,7 +28,7 @@ m = length(signal);
 n = pow2(nextpow2(m));%new signal length that is next power of 2 greater than original signal length (for faster computation)
 y = fft(signal,n); %Fast fourier transform. Pads the signal with zeros to increase the new signal length n.  
 f = (0:n-1)*(fs/n); % frequency vector
-
+power = abs(y).^2/n;   % power spectrum  
 
 %% 
 % The for loop below sets the maximum of x-axis so that the power spectrum
@@ -38,8 +39,7 @@ for i=1:m
         maxfreq = i;
         break
     end
-end
-power = abs(y).^2/n;   % power spectrum      
+end    
 vocalrange = f(1:maxfreq); 
 vocalpower = power(1:maxfreq);
 figure
