@@ -10,7 +10,7 @@ ction.
 %}
 %% 
 
-[signal,fs] = audioread('Passage_pitch.wav'); 
+[signal,fs] = audioread('aga4.wav'); 
 % reads data from the audiofile and returns sampled data, signal, and a
 % sample rate of the data, Fs
 signal = signal(:,1);
@@ -32,9 +32,9 @@ power = abs(y).^2/n;   % power spectrum
 
 %% 
 % The for loop below sets the maximum of x-axis so that the power spectrum
-% of the signal only shows the common human vocal range. 
+% of the signal truncates the further half of the fft.
 for i=1:m
-    if f(1,i) >= 1100
+    if f(1,i) >= fs/2
         f = f(1:i);
         maxfreq = i;
         break
