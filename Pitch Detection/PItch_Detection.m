@@ -10,7 +10,7 @@ ction.
 %}
 %% 
 
-[signal,fs] = audioread('aga4.wav'); 
+[signal,fs] = audioread('Passage_pitch.wav'); 
 % reads data from the audiofile and returns sampled data, signal, and a
 % sample rate of the data, Fs
 signal = signal(:,1);
