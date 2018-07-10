@@ -5,12 +5,11 @@ the pitch along with the harmonics on top of the pitch.
 You must import data from "music pitch chart.csv" file to get the table of
 notes and their corresponding frequencies. To do so, click import data,
 select the "music pitch chart.csv" file, make sure the output type is
-column vectors, and click Import Sele
-ction.
+column vectors, and click Import Selection.
 %}
 %% 
 
-[signal,fs] = audioread('Passage_pitch.wav'); 
+[signal,fs] = audioread('aga4.wav'); 
 % reads data from the audiofile and returns sampled data, signal, and a
 % sample rate of the data, Fs
 signal = signal(:,1);
@@ -29,11 +28,11 @@ n = pow2(nextpow2(m));%new signal length that is next power of 2 greater than or
 y = fft(signal,n); %Fast fourier transform. Pads the signal with zeros to increase the new signal length n.  
 f = (0:n-1)*(fs/n); % frequency vector
 power = abs(y).^2/n;   % power spectrum  
-
+%power = abs(y);
 %% 
 % The for loop below sets the maximum of x-axis so that the power spectrum
 % of the signal truncates the further half of the fft.
-for i=1:m
+for i=1:n
     if f(1,i) >= fs/2
         f = f(1:i);
         maxfreq = i;
@@ -54,7 +53,7 @@ Scale = '';
 % The for loop selects frequencies with relatively high power and stores it
 % inside a matrix Pitches.
 for i= 1:length(f)
-    if map(i, 2) > 1
+    if map(i, 2) > 0.25
         Pitches = [Pitches, map(i,1)];
     end
 end
@@ -70,12 +69,14 @@ for i = 1:length(Pitches)
 end
 
 %% 
-Scale = split(Scale);
-Scale = unique(Scale); %eliminates repeated notes within Scale
-if length(Scale) > 1
-    Scale = Scale(2:end, 1);
+Scale = unique(split(Scale), 'stable');
+if Scale(end) == ""
+    Scale(end) = [];
 end
 % After the for loop, the scale string should only consist of the main note
 % and the harmonics.
 pitch = Scale(1,1); % pitch of the note.
 
+%% 
+periodogram(signal, [], [], fs);
+spectrogram(signal, 2048, [], [], fs, 'yaxis');colormap;
