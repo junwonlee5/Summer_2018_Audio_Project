@@ -8,8 +8,8 @@ select the "music pitch chart.csv" file, make sure the output type is
 column vectors, and click Import Selection.
 %}
 %% 
-
-[signal,fs] = audioread('aga4.wav'); 
+load init_workspace
+[signal,fs] = audioread('a4.wav'); 
 % reads data from the audiofile and returns sampled data, signal, and a
 % sample rate of the data, Fs
 signal = signal(:,1);
@@ -27,8 +27,10 @@ m = length(signal);
 n = pow2(nextpow2(m));%new signal length that is next power of 2 greater than original signal length (for faster computation)
 y = fft(signal,n); %Fast fourier transform. Pads the signal with zeros to increase the new signal length n.  
 f = (0:n-1)*(fs/n); % frequency vector
-power = abs(y).^2/n;   % power spectrum  
-%power = abs(y);
+power = abs(y/n);   % power spectrum  
+power = power(1:n/2+1);
+power(2:end-1) = 2*power(2:end-1);
+
 %% 
 % The for loop below sets the maximum of x-axis so that the power spectrum
 % of the signal truncates the further half of the fft.
@@ -53,7 +55,7 @@ Scale = '';
 % The for loop selects frequencies with relatively high power and stores it
 % inside a matrix Pitches.
 for i= 1:length(f)
-    if map(i, 2) > 0.25
+    if map(i, 2) > 0.002
         Pitches = [Pitches, map(i,1)];
     end
 end
