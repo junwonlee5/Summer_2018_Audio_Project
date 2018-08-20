@@ -10,4 +10,4 @@ The livecheck.m function utilizes the Pitch_Detection.m function, where it recor
 
 ## 2. Audio Filter
 
-In the second folder "Audio Filter", the function filter_design.m applies butterworth filter onto audio file and creates a new signal signal_filt_2. This is particularly used to simulate the second order of Sallen-Key filter. 
+In the second folder "Audio Filter", the function filter_design.m applies butterworth filter onto audio file and creates a new signal signal_filt_2. This is particularly useful to simulate the second order of Sallen-Key filter. 
