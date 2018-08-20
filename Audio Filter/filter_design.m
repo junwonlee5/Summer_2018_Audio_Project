@@ -1,55 +1,46 @@
-[signal,fs] = audioread('a4.wav');
+%{
+The following code filters the signal
+%}
+
+function [signal_filt_2, fs, t] = filter_design(file, N_ord, lpcutoff_Hz, hpcutoff_Hz, amp_factor)
+[signal,fs] = audioread(file);
 signal = signal(:,1);
 t = (0:1/fs:(length(signal)-1)/fs);
 plot(t,signal);
-sound(signal, fs);
+%sound(signal, fs);
 xlabel('Time (seconds)')
 ylabel('Amplitude')
+title('Music file')
 xlim([0 t(end)])
 
 
 %%
 % making butterworth filter
-N = 5;  %Nth order
-cutoff_Hz = 200; %Lowpass frequency in Hz
-cutoff_Hz_2 = 20; %Highpass frequench in Hz
-[b,a]=butter(N,cutoff_Hz/(fs/2),'low');  %this makes butterworth lowpass filter
-[d,c]=butter(N,cutoff_Hz_2/(fs/2), 'high'); %this makes butterworth highpass filter
-amp_factor = 1.5;
+%Nth order
+if lpcutoff_Hz > 0
+    [b,a]=butter(N_ord,lpcutoff_Hz/(fs/2),'low');  %this makes butterworth lowpass filter
+    [d,c]=butter(N_ord,hpcutoff_Hz/(fs/2), 'high'); %this makes butterworth highpass filter
 
-signal_filt = filter(b,a,signal); %Signal goes through lowpass filter
-signal_filt_2 = filter(d, c, signal_filt); %Signal goes through low and high pass filter
+    signal_filt = filter(b,a,signal); %Signal goes through lowpass filter
+    signal_filt_2 = filter(d, c, signal_filt); %Signal goes through low and high pass filter
 
-figure;
-plot(t,signal,t,signal_filt,t,signal_filt_2*amp_factor);
-xlabel('Time (sec)');
-ylabel('Amplitude');
-ylim([-1 1]);
-legend('Raw','Filtered', 'Filtered2');
-title([num2str(N) 'rd-Order Filter with Cutoff at ' num2str(cutoff_Hz) ' Hz and '  num2str(cutoff_Hz_2) ' Hz']);
-sound(signal_filt_2*amp_factor, fs);
 
-%% 
-% Making Chebyshev I filter
-N = 5;  %Nth order
-Rp = 3; % Decibel
-cutoff_Hz = 600; %Lowpass frequency in Hz
-cutoff_Hz_2 = 400; %Highpass frequench in Hz
-[b,a]=cheby1(N,Rp, cutoff_Hz/(fs/2),'low');  %this makes butterworth lowpass filter
-[d,c]=cheby1(N,Rp, cutoff_Hz_2/(fs/2), 'high'); %this makes butterworth highpass filter
-amp_factor = 1.5;
+    % Plots the filtered signal
+    figure;
+    plot(t,signal_filt_2*amp_factor, 'g-');
+    xlabel('Time (sec)');
+    ylabel('Amplitude');
+    ylim([-1 1]);
+    legend('LP & HP Filtered2');
+    title([num2str(N_ord) 'rd-Order Filter with Cutoff at ' num2str(lpcutoff_Hz) ' Hz and '  num2str(hpcutoff_Hz) ' Hz']);
 
-signal_filt = filter(b,a,signal); %Signal goes through lowpass filter
-signal_filt_2 = filter(d, c, signal_filt); %Signal goes through low and high pass filter
+    %sound(signal_filt_2*amp_factor, fs);
+else
+    signal_filt_2 = signal * amp_factor;
+    %sound(signal_filt_2*amp_factor, fs)
+end
 
-figure;
-plot(t,signal,t,signal_filt,t,signal_filt_2*amp_factor);
-xlabel('Time (sec)');
-ylabel('Amplitude');
-ylim([-1 1]);
-legend('Raw','Filtered', 'Filtered2');
-title([num2str(N) 'rd-Order Filter with Cutoff at ' num2str(cutoff_Hz) ' Hz and '  num2str(cutoff_Hz_2) ' Hz']);
-sound(signal_filt_2*amp_factor, fs);
+
 
 %% 
 m = length(signal_filt_2); 
@@ -76,13 +67,19 @@ figure
 plot(vocalrange, vocalpower) %Plots the power spectrum over different frequency rate.
 xlabel('Frequency')
 ylabel('Power')
-map = [transpose(vocalrange) vocalpower];
+title('FFT of Filtered Music File')
+
 
 %% 
 %Periodogram and spectrogram of signal
+segment = 0.05*fs;
+figure
 periodogram(signal_filt_2, [], [], fs);
 figure
-spectrogram(signal_filt_2, 1024, [], [], fs, 'yaxis');colormap;
+spectrogram(signal_filt_2, round(length(t)./segment), [], [], fs, 'yaxis');%colorbar;
+%colormap(hot);
+title('Spectrogram of Filtered Music File')
+end
     
 
 

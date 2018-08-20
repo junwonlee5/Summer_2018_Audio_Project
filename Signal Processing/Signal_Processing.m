@@ -1,13 +1,13 @@
 %%Signal Processing
-%% 
+
 %Square wave Fourier Transform
 
-fs = 200;
-t = 0:1/fs:1;
+fs = 150;
+t = 0:1/fs:2;
 f = 10;
 x = square(2*pi*t*f);
 L = length(x);
-% nfft = 1024;
+nfft = 1024;
 plot(t/pi,x,'.-',t/pi,sin(2*pi*t*f))
 xlabel('t / \pi')
 grid on
@@ -47,15 +47,18 @@ ylabel('Power');
 %Non-Periodic Chirp & Spectrogram
 nfft = 1024;
 fs = 500;
-t = 0:1/1e3:10;
+t = 0:1/1e3:1;
 x = chirp(t,0,1,250);
+L = length(x);
 plot(t, x);
 
 y = fft(x, nfft);
 y = y(1:nfft/2);
+power = abs(y/L);   % power spectrum  
+power(2:end-1) = 2*power(2:end-1);
 freq = (0:nfft/2-1)*fs/nfft;
-power = abs(y);
 plot(freq, power);
+figure
 spectrogram(x,256,250,256,1e3,'yaxis')
 
 %% 
@@ -69,30 +72,6 @@ plot(t,x, t, y)
 legend('Original Signal','Signal with AWGN')
 
 %% 
-%signal synthesis
-fs = 200;
-nfft = 1000;
-t = 0:1/fs:10;
-omega_1 = 2*pi;
-amp1 = 2;
-omega_2 = 5*pi;
-amp2 = 1;
-signal1 = amp1*sin(omega_1*t);
-signal2 = amp2*sin(omega_2*t);
-signal = signal1 + signal2;
-h = hamming(length(signal));
-signal = signal .* transpose(h);
-plot(t, signal)
-y = fft(signal, nfft);
-y = y(1:nfft/2);
-freq = (0:nfft/2-1)*fs/nfft;
-power = abs(y);
-stem(freq, power);
-%% 
-% Inverse Fourier Transform
-a = ifft(fft(signal,nfft));
-plot(t(1:nfft), signal(1:nfft), 'b*', t(1:nfft), a, 'r-')
-%% 
 % Complex signal
 fs = 200;
 f1 = 3;
@@ -103,16 +82,8 @@ t = 0:1/fs:10;
 y1 = amp1* exp(1j*f1*t);
 y2 = amp2 * exp(1j*f2*t);
 y = y1 + y2;
-plot(t, real(y), t, imag(y), t, abs(y))
-%% 
-% Square Signal
-fs = 200;
-t = 0:1/fs:10;
-f = 1;
-x = square(2*pi*t*f);
-plot(t/pi,x,'.-',t/pi,sin(2*pi*t*f))
-xlabel('t / \pi')
-grid on
+plot(t, real(y),'r-', t, imag(y), 'b-',t, abs(y),'g-')
+
 %% 
 % Smoothing Square Signal with simple low pass filter
 fs = 200;
@@ -171,7 +142,6 @@ window = window ./ length(window);
 finwindow = [window, zeros(1, length(x) - length(window))];
 convolved = conv(x, window, 'valid');
 C = length(convolved);
-
 %plot(t, x, 'b-', t, convolved, 'r-');
 
 y = fft(convolved, nfft);
@@ -239,11 +209,12 @@ power3 = abs(z);
 plot(freq, power3, freq, ratio);
 
 %% 
-load handel; % the signal is in y and sampling freq in Fs
-sound(y,Fs); pause(10); % Play the original sound
-alpha = 0.9; D = 4196; % Echo parameters
-b = [1,zeros(1,D),alpha]; % Filter parameters
-x = filter(b,1,y); % Generate sound plus its echo
-sound(x,Fs); pause(10); % Play sound with echo
-w = filter(1,b,x);
-sound(w, Fs)
+load handel;
+figure
+subplot(2,1,1)
+plot(y)
+title('handel in time domain')
+subplot(2,1,2)
+spectrogram(y, 256,128, 256, Fs, 'yaxis')
+title('Spectrogram of handel') 
+
