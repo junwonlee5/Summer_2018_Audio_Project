@@ -24,9 +24,10 @@ The command window will give you a 3 second countdown, and after that it will re
 
 In the second folder "Audio Filter", the function filter_design.m applies butterworth filter onto audio file and creates a new signal signal_filt_2. This is particularly useful to simulate the second order of Sallen-Key filter. The function requires the audio file, order of filter, the lowpass and highpass cutoff frequency, and the amplification factor. 
 
-To run the function, type the following.
+To run the function, type the following:
 
 [signal_filt_2, fs, t] = filter_design(file, N_ord, lpcutoff_Hz, hpcutoff_Hz, amp_factor)
+
 where file is the filenmae and N_ord is the order of filter. This will give the time vector, the sampling rate, and filtered signal signal_filt_2. To simply amplify the signal instead of filtering it, type 0 for lpcutoff_Hz (lowpass frequency cutoff in Hz). 
 
 ## 3. Signal Processing
