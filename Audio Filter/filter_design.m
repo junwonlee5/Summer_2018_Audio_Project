@@ -15,8 +15,7 @@ xlim([0 t(end)])
 
 
 %%
-% making butterworth filter
-%Nth order
+% making butterworth filter with Nth order
 if lpcutoff_Hz > 0
     [b,a]=butter(N_ord,lpcutoff_Hz/(fs/2),'low');  %this makes butterworth lowpass filter
     [d,c]=butter(N_ord,hpcutoff_Hz/(fs/2), 'high'); %this makes butterworth highpass filter
