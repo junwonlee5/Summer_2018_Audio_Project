@@ -1,6 +1,6 @@
 %%Signal Processing
 
-%Square wave Fourier Transform & Inverse Fourier Transform
+%%Square wave Fourier Transform & Inverse Fourier Transform
 
 fs = 150;
 t = 0:1/fs:2;
