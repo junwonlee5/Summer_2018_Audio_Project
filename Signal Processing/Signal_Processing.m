@@ -110,7 +110,8 @@ title('Square Wave')
 grid on
 
 %Designing Lowpass filter
-window = ones(1,5);
+%window = ones(1,5);
+window = [0 1 0]
 window = window ./ length(window);
 finwindow = [window, zeros(1, length(x) - length(window))];
 %prod = finwindow .* x;
